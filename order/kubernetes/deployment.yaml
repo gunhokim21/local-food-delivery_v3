@@ -16,12 +16,15 @@ spec:
     spec:
       containers:
         - name: order
-          image: username/order:latest
+          image: mingenyu/order:v2
           ports:
             - containerPort: 8080
+          resources:
+            requests:
+              cpu: "200m"
           readinessProbe:
             httpGet:
-              path: '/actuator/health'
+              path: '/orders'
               port: 8080
             initialDelaySeconds: 10
             timeoutSeconds: 2
@@ -29,9 +32,13 @@ spec:
             failureThreshold: 10
           livenessProbe:
             httpGet:
-              path: '/actuator/health'
+              path: '/orders'
               port: 8080
             initialDelaySeconds: 120
             timeoutSeconds: 2
             periodSeconds: 5
             failureThreshold: 5
+      volumes:
+      - name: ebs
+        persistentVolumeClaim:
+          claimName: delivery-pvc
