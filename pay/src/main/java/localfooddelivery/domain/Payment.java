@@ -17,42 +17,23 @@ public class Payment  {
     
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
-    
-    
-    
-    
-    
+        
     private Long payid;
-    
-    
-    
-    
     
     private Long orderId;
     
-    
-    
-    
-    
     private Integer amount;
-    
-    
-    
-    
-    
+        
     private String status;
 
     @PostPersist
     public void onPostPersist(){
 
-
         PaymentApproved paymentApproved = new PaymentApproved(this);
         paymentApproved.publishAfterCommit();
 
-
-
-        PaymentCanceled paymentCanceled = new PaymentCanceled(this);
-        paymentCanceled.publishAfterCommit();
+        // PaymentCanceled paymentCanceled = new PaymentCanceled(this);
+        // paymentCanceled.publishAfterCommit();
 
     }
 
@@ -82,7 +63,15 @@ public class Payment  {
 
          });
         */
-
+        // modified 
+        repository().findById(orderCanceled.getOrderId()).ifPresent(payment->{
+            payment.setStatus("취소됨");                
+            repository().save(payment);        
+            // repository().delete(payment);
+            
+            PaymentCanceled paymentCanceled = new PaymentCanceled(payment);
+            paymentCanceled.publishAfterCommit();
+        });    
         
     }
 
