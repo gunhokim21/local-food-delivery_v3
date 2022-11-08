@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.Date;
 
+// for fillback 
+// @FeignClient(name = "order", url = "${api.url.order}", fallback = OrderServiceFallback.class)
 @FeignClient(name = "order", url = "${api.url.order}")
 public interface OrderService {
     @RequestMapping(method= RequestMethod.GET, path="/orders/{orderId}")
