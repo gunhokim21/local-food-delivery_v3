@@ -1,0 +1,50 @@
+mvn clean (재기동시)
+mvn spring-boot:run
+
+
+
+* 주문 생성
+http :8081/orders menu="Pasta" qty=2 userId="Hwang" price=2000 address="my home"
+http :8081/orders menu="Pasta" qty=5 userId="Lee" price=2000 address="your home"
+http :8081/orders menu="pizza" qty=3 userId="Song" price=15000 address="your home"
+http :8081/orders qty=8 userId="KIM" price=2000
+
+
+* 주문 취소 
+http DELETE :8081/orders/1
+http DELETE :8081/orders/2
+http DELETE :8081/orders/3
+
+
+* 주문 강제수정
+http PUT :8081/orders/1 menu="Pasta" qty=5 userId="Lee" price=2000 address="your home"
+
+* 결재 조회 
+http :8082/payments
+http :8082/payments/1
+
+
+* store 수정
+  // 조리시작 
+http PUT :8083/stores/1 status="AAA" 
+http PUT :8083/stores/1 status="배달시작"
+
+
+* 주문조회 
+http :8081/orders
+http :8082/payments
+http :8083/stores
+http :8085/orderLists
+
+
+circuit breaker 
+siege -c2 -t5S  -v --content-type "application/json" 'http://localhost:8083/stores/1 PUT {"status":"AAA"}'
+
+siege -c2 -t10S  -v --content-type "application/json" 'http://localhost:8081/orders POST {"productId":1, "qty":1}'
+
+kafka 조회 
+
+cd kafka
+docker-compose exec -it kafka /bin/bash
+cd /bin
+./kafka-console-consumer --bootstrap-server http://localhost:9092 --topic localfooddelivery --from-beginning
